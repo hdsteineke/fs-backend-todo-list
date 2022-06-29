@@ -45,8 +45,18 @@ describe('users', () => {
     await request(app).post('/api/v1/users').send(mockUser);
     const res = await request(app).post('/api/v1/users/sessions').send(mockUser);
     expect(res.body.message).toEqual('Signed in successfully!');
-
   });
+
+  it('returns authenticated user', async () => {
+    const [agent, user] = await handleSignIn();
+    const me = await agent.get('/api/v1/users/me');
+    expect(me.body).toEqual({
+      ...user,
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
+  
 });
     
     
