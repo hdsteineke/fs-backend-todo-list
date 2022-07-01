@@ -57,7 +57,7 @@ describe('users', () => {
     expect(res.body.task).toEqual('Wake up goats');
   });
 
-  it('should return a 401 for non-authenticated users trying to create ne todo', async() => {
+  it('should return a 401 for non-authenticated users trying to create new todo', async() => {
     const res = await request(app).post('/api/v1/todos').send({ task: 'Gather eggs', details: 'chicken headcount' });
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
@@ -68,8 +68,15 @@ describe('users', () => {
     expect(res.body.task).toEqual('Gather eggs');
   });
 
-  it('should update a particular todo for authenticated users', async () => {
+  it('should return a 401 for non-authenticated users trying to update a todo', async () => {
     const res = await request(app).put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
+    expect(res.status).toEqual(401);
+    expect(res.body.message).toEqual('You must be signed in to continue');
+  });
+
+  it('should update a particular todo for authenticated users', async () => {
+    const [agent] = await handleSignIn();
+    const res = await agent.put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(200);
     expect(res.body.id).toEqual('2');
   });
