@@ -20,7 +20,8 @@ describe('users', () => {
 
   it('should return a particular todo', async () => {
     const res = await request(app).get('/api/v1/todos/1');
-    expect(res.body.task).toEqual('Wake up goats')
+    console.log('res.body', res.body);
+    expect(res.body.task).toEqual('Wake up goats');
   });
 
 });
