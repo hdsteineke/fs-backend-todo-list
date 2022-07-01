@@ -79,17 +79,25 @@ describe('users', () => {
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
 
-  it('should return a 403 for signed in users trying to update todo but NOT authorized', async () => {
+  it('PUT should return a 403 for signed in users trying to update todo but NOT authorized', async () => {
     const [agent] = await handleSignIn();
     const res = await agent.put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(403);
     expect(res.body.message).toEqual('You do not have access to this.');
   });
 
-  it('should update a particular todo for authenticated and authorized users', async () => {
-    const [agent] = await handleSignIn();
-    const res = await agent.put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
+  it('PUT should update a particular todo for authenticated and authorized users', async () => {
+    const [agent, user] = await handleSignIn();
+    const todo = await Todo.insert({
+      task: 'Fold laundry',
+      details: 'Hang dry wool sweater',
+      user_id: user.id
+    });
+    const res = await agent
+      .put(`/api/v1/todos/${todo.id}`)
+      .send({ task: 'Do laundry' });
     expect(res.status).toEqual(200);
+    expect(res.body).toEqual({ ...todo, task: 'Do laundry', created_at: expect.any(String) });
   });
 
   it('should return a 401 for non-authenticated users attempting to delete a todo', async () => {
@@ -99,10 +107,15 @@ describe('users', () => {
   });
 
   it('should delete a particular to do for authenticated users', async () => {
-    const [agent] = await handleSignIn();
-    const res = await agent.delete('/api/v1/todos/2');
+    const [agent, user] = await handleSignIn();
+    const todo = await Todo.insert({
+      task: 'Unload dishwasher',
+      details: 'organize tupperware shelf',
+      user_id: user.id
+    });
+    const res = await agent.delete(`/api/v1/todos/${todo.id}`);
     expect(res.status).toEqual(200);
-    expect(res.body.id).toEqual('2');
+    expect(res.body.id).toEqual(todo.id);
   });
 
 });
