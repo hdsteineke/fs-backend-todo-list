@@ -44,8 +44,16 @@ describe('users', () => {
     expect(res.body.length).toEqual(4);
   });
 
-  it('should return a particular todo for authenticated users', async () => {
+  it('should return a 401 for non-authenticated users', async () => {
     const res = await request(app).get('/api/v1/todos/1');
+    expect(res.status).toEqual(401);
+    expect(res.body.message).toEqual('You must be signed in to continue');
+  });
+
+  it('should return a particular todo for authenticated users', async () => {
+    const [agent] = await handleSignIn();
+    const res = await agent.get('/api/v1/todos/1');
+    expect(res.status).toEqual(200);
     expect(res.body.task).toEqual('Wake up goats');
   });
 
