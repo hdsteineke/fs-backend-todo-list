@@ -34,4 +34,10 @@ describe('users', () => {
     expect(res.body.id).toEqual('2');
   });
 
+  it('should delete a particular to do', async () => {
+    const res = await request(app).delete('/api/v1/todos/2');
+    expect(res.status).toEqual(200);
+    expect(res.body.id).toEqual(2);
+  });
+
 });
