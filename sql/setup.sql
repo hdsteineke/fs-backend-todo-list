@@ -1,7 +1,7 @@
 -- Use this file to define your SQL tables
 -- The SQL in this file will be executed when you run `npm run setup-db`
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS todos;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS todos CASCADE;
 
 CREATE TABLE users (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -15,19 +15,20 @@ CREATE TABLE todos (
   user_id BIGINT,
   task VARCHAR NOT NULL,
   details VARCHAR,
-  created_at TIMESTAMP
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-INSERT INTO todos (
-  user_id,
-  task,
-  details,
-  created_at
-)
+-- INSERT INTO todos (
+--   user_id,
+--   task,
+--   details,
+--   created_at
+-- )
 
-VALUES
-(null, 'Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
-(null, 'Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
-(null, 'Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
-(null, 'Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
-;
+-- VALUES
+-- (null, 'Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
+-- (null, 'Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
+-- (null, 'Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
+-- (null, 'Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
+-- ;

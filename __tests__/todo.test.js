@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const Todo = require('../lib/models/Todo');
 
 
 const mockUser = {
@@ -50,10 +51,15 @@ describe('users', () => {
   });
 
   it('should return a particular todo for authenticated users', async () => {
-    const [agent] = await handleSignIn();
-    const res = await agent.get('/api/v1/todos/1');
+    const [agent, user] = await handleSignIn();
+    const todo = await Todo.insert({
+      user_id: user.id, 
+      task: 'Fill hummingbird feeders',
+      details: 'nectar is in fridge'
+    });
+    const res = await agent.get(`/api/v1/todos/${todo.id}`);
     expect(res.status).toEqual(200);
-    expect(res.body.task).toEqual('Wake up goats');
+    expect(res.body.task).toEqual('Fill hummingbird feeders');
   });
 
   it('should return a 401 when signed out and trying to create new todo', async() => {
