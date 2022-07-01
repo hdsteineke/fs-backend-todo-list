@@ -20,8 +20,12 @@ describe('users', () => {
 
   it('should return a particular todo', async () => {
     const res = await request(app).get('/api/v1/todos/1');
-    console.log('res.body', res.body);
     expect(res.body.task).toEqual('Wake up goats');
+  });
+
+  it('should create a new todo', async() => {
+    const res = await request(app).post('/api/v1/todos').send({ task: 'Gather eggs', details: 'chicken headcount' });
+    expect(res.body.task).toEqual('Gather eggs');
   });
 
 });
