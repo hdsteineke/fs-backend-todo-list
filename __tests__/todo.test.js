@@ -28,7 +28,7 @@ describe('users', () => {
     expect(res.body.task).toEqual('Gather eggs');
   });
 
-  ('should update a particular todo', async () => {
+  it('should update a particular todo', async () => {
     const res = await request(app).put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(200);
     expect(res.body.id).toEqual('2');
