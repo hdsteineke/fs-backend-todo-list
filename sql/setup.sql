@@ -12,20 +12,22 @@ CREATE TABLE users (
 
 CREATE TABLE todos (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id BIGINT,
   task VARCHAR NOT NULL,
   details VARCHAR,
   created_at TIMESTAMP
 );
 
 INSERT INTO todos (
+  user_id,
   task,
   details,
   created_at
 )
 
 VALUES
-('Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
-('Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
-('Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
-('Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
+(null, 'Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
+(null, 'Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
+(null, 'Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
+(null, 'Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
 ;

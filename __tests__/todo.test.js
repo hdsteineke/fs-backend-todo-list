@@ -31,7 +31,7 @@ describe('users', () => {
     pool.end();
   });
 
-  it('should return a 401 for non-authenticated users and listing all todos', async () => {
+  it('should return a 401 when signed out and listing all todos', async () => {
     const res = await request(app).get('/api/v1/todos');
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');
@@ -41,10 +41,9 @@ describe('users', () => {
     const [agent] = await handleSignIn();
     const res = await agent.get('/api/v1/todos');
     expect(res.status).toEqual(200);
-    expect(res.body.length).toEqual(4);
   });
 
-  it('should return a 401 for non-authenticated users and returning a particular todo', async () => {
+  it('should return a 401 when signed out and returning a particular todo', async () => {
     const res = await request(app).get('/api/v1/todos/1');
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');
@@ -57,7 +56,7 @@ describe('users', () => {
     expect(res.body.task).toEqual('Wake up goats');
   });
 
-  it('should return a 401 for non-authenticated users trying to create new todo', async() => {
+  it('should return a 401 when signed out and trying to create new todo', async() => {
     const res = await request(app).post('/api/v1/todos').send({ task: 'Gather eggs', details: 'chicken headcount' });
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
@@ -68,17 +67,23 @@ describe('users', () => {
     expect(res.body.task).toEqual('Gather eggs');
   });
 
-  it('should return a 401 for non-authenticated users trying to update a todo', async () => {
+  it('should return a 401 when signed out and trying to update a todo', async () => {
     const res = await request(app).put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
 
-  it('should update a particular todo for authenticated users', async () => {
+  it('should return a 403 for signed in users trying to update todo but NOT authorized', async () => {
+    const [agent] = await handleSignIn();
+    const res = await agent.put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
+    expect(res.status).toEqual(403);
+    expect(res.body.message).toEqual('You do not have access to this.');
+  });
+
+  it('should update a particular todo for authenticated and authorized users', async () => {
     const [agent] = await handleSignIn();
     const res = await agent.put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(200);
-    expect(res.body.id).toEqual('2');
   });
 
   it('should return a 401 for non-authenticated users attempting to delete a todo', async () => {
