@@ -81,8 +81,15 @@ describe('users', () => {
     expect(res.body.id).toEqual('2');
   });
 
-  it('should delete a particular to do for authenticated users', async () => {
+  it('should return a 401 for non-authenticated users attempting to delete a todo', async () => {
     const res = await request(app).delete('/api/v1/todos/2');
+    expect(res.status).toEqual(401);
+    expect(res.body.message).toEqual('You must be signed in to continue');
+  });
+
+  it('should delete a particular to do for authenticated users', async () => {
+    const [agent] = await handleSignIn();
+    const res = await agent.delete('/api/v1/todos/2');
     expect(res.status).toEqual(200);
     expect(res.body.id).toEqual('2');
   });
