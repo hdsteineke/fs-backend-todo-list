@@ -18,5 +18,9 @@ describe('users', () => {
     expect(res.body.length).toEqual(4);
   });
 
+  it('should return a particular todo', async () => {
+    const res = await request(app).get('/api/v1/todos/1');
+    expect(res.body.task).toEqual('Wake up goats')
+  });
 
 });
