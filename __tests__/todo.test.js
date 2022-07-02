@@ -11,6 +11,7 @@ const mockUser = {
   password: '1234567890'
 };
 
+
 const handleSignIn = async (userProps = {}) => {
   const password = userProps.password ?? mockUser.password;
 
@@ -32,25 +33,25 @@ describe('users', () => {
     pool.end();
   });
 
-  it('should return a 401 when signed out and listing all todos', async () => {
+  it('GET should return a 401 when signed out and listing all todos', async () => {
     const res = await request(app).get('/api/v1/todos');
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
 
-  it('should return a list of todo items for authenticated users', async () => {
+  it('GET should return a list of todo items for authenticated users', async () => {
     const [agent] = await handleSignIn();
     const res = await agent.get('/api/v1/todos');
     expect(res.status).toEqual(200);
   });
 
-  it('should return a 401 when signed out and returning a particular todo', async () => {
+  it('GET/:id should return a 401 when signed out and returning a particular todo', async () => {
     const res = await request(app).get('/api/v1/todos/1');
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
 
-  it('should return a particular todo for authenticated users', async () => {
+  it('GET/:id should return a particular todo for authenticated users', async () => {
     const [agent, user] = await handleSignIn();
     const todo = await Todo.insert({
       user_id: user.id, 
@@ -62,18 +63,31 @@ describe('users', () => {
     expect(res.body.task).toEqual('Fill hummingbird feeders');
   });
 
-  it('should return a 401 when signed out and trying to create new todo', async() => {
+  it('POST should return a 401 when signed out and trying to create new todo', async() => {
     const res = await request(app).post('/api/v1/todos').send({ task: 'Gather eggs', details: 'chicken headcount' });
     expect(res.body.message).toEqual('You must be signed in to continue');
   });
 
-  it('should create a new todo for authenticated users', async() => {
-    const [agent] = await handleSignIn();
-    const res = await agent.post('/api/v1/todos').send({ task: 'Gather eggs', details: 'chicken headcount' });
-    expect(res.body.task).toEqual('Gather eggs');
+  it('POST should create a new todo for authenticated users', async() => {
+    const [agent, user] = await handleSignIn();
+
+    const newTask = {
+      task: 'Gather eggs', 
+      details: 'chicken headcount',
+      user_id: user.id 
+    };
+    const res = await agent.post('/api/v1/todos').send(newTask);
+    expect(res.status).toEqual(200);
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      task: 'Gather eggs',
+      details: 'chicken headcount',
+      user_id: expect.any(String),
+      created_at: expect.any(String)
+    });
   });
 
-  it('should return a 401 when signed out and trying to update a todo', async () => {
+  it('PUT should return a 401 when signed out and trying to update a todo', async () => {
     const res = await request(app).put('/api/v1/todos/2').send({ task: 'Remember to feed chickens' });
     expect(res.status).toEqual(401);
     expect(res.body.message).toEqual('You must be signed in to continue');

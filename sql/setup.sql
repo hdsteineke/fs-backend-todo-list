@@ -20,15 +20,14 @@ CREATE TABLE todos (
 );
 
 INSERT INTO todos (
-  user_id,
   task,
   details,
   created_at
 )
 
 VALUES
-(null, 'Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
-(null, 'Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
-(null, 'Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
-(null, 'Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
+('Wake up goats', 'check food, water, open doors to pasture', CURRENT_TIMESTAMP),
+('Feed chickens', 'lower food bucket, refill if necessry', CURRENT_TIMESTAMP),
+('Refill hummingbird food', 'nectar is kept in fridge', CURRENT_TIMESTAMP),
+('Water plants', 'fruit trees get 5 gallons', CURRENT_TIMESTAMP)
 ;
